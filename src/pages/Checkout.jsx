@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import ordersData from '../data/orders.json'
 
 function generateDigitalKey() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -47,7 +48,8 @@ function Checkout() {
       claveDigital: generateDigitalKey()
     }
 
-    const orders = JSON.parse(localStorage.getItem('rapishop_orders') || '[]')
+    const allOrders = JSON.parse(localStorage.getItem('rapishop_orders') || '[]')
+    const orders = allOrders.length > 0 ? allOrders : ordersData
     orders.push(order)
     localStorage.setItem('rapishop_orders', JSON.stringify(orders))
 

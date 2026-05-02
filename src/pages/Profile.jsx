@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { generateOrderPDF } from '../utils/generatePDF'
+import ordersData from '../data/orders.json'
 
 function Profile() {
   const { user, logout, isAuthenticated } = useAuth()
@@ -15,7 +16,8 @@ function Profile() {
     }
 
     const allOrders = JSON.parse(localStorage.getItem('rapishop_orders') || '[]')
-    const userOrders = allOrders.filter(o => o.userId === user.id)
+    const orders = allOrders.length > 0 ? allOrders : ordersData
+    const userOrders = orders.filter(o => o.userId === user.id)
     setOrders(userOrders)
   }, [user, isAuthenticated, navigate])
 
