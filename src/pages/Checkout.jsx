@@ -73,15 +73,15 @@ function Checkout() {
 
   return (
     <div className="min-h-screen bg-[#0B0F1A]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-black text-white mb-8">
-          Checkout <span className="text-[#A0A0A0] text-lg font-normal">Finaliza tu compra</span>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <h1 className="text-2xl sm:text-3xl font-black text-white mb-6 sm:mb-8">
+          Checkout <span className="text-[#A0A0A0] text-base sm:text-lg font-normal">Finaliza tu compra</span>
         </h1>
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <div className="space-y-6">
-              <div className="card p-6">
-                <h2 className="text-xl font-bold text-white mb-4">Datos de contacto</h2>
+              <div className="card p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Datos de contacto</h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm text-[#A0A0A0] mb-1">Nombre completo</label>
@@ -94,8 +94,8 @@ function Checkout() {
                 </div>
               </div>
 
-              <div className="card p-6">
-                <h2 className="text-xl font-bold text-white mb-4">Método de pago</h2>
+              <div className="card p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Método de pago</h2>
                 <div className="space-y-3">
                   <label className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'yape' ? 'border-[#A020F0] bg-[#A020F0]/10' : 'border-[#1A1F2E] hover:border-[#A020F0]'}`}>
                     <input type="radio" name="payment" value="yape" checked={paymentMethod === 'yape'} onChange={(e) => setPaymentMethod(e.target.value)} className="w-4 h-4" />
@@ -124,8 +124,8 @@ function Checkout() {
               </div>
 
               {paymentMethod === 'card' && (
-                <div className="card p-6">
-                  <h2 className="text-lg font-bold text-white mb-4">Datos de tarjeta</h2>
+                <div className="card p-4 sm:p-6">
+                  <h2 className="text-base sm:text-lg font-bold text-white mb-4">Datos de tarjeta</h2>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm text-[#A0A0A0] mb-1">Número de tarjeta</label>
@@ -140,8 +140,8 @@ function Checkout() {
               )}
 
               {paymentMethod === 'yape' && (
-                <div className="card p-6">
-                  <h2 className="text-lg font-bold text-white mb-4">Datos de Yape</h2>
+                <div className="card p-4 sm:p-6">
+                  <h2 className="text-base sm:text-lg font-bold text-white mb-4">Datos de Yape</h2>
                   <div>
                     <label className="block text-sm text-[#A020F0] mb-1">Número de celular</label>
                     <input type="tel" name="yapePhone" value={formData.yapePhone} onChange={handleChange} className="input-gaming w-full" placeholder="999 999 999" />
@@ -150,8 +150,8 @@ function Checkout() {
               )}
 
               {paymentMethod === 'other' && (
-                <div className="card p-6">
-                  <h2 className="text-lg font-bold text-white mb-4">Otro método de pago</h2>
+                <div className="card p-4 sm:p-6">
+                  <h2 className="text-base sm:text-lg font-bold text-white mb-4">Otro método de pago</h2>
                   <div>
                     <label className="block text-sm text-[#A0A0A0] mb-1">Especifica el método</label>
                     <input type="text" name="otherMethod" value={formData.otherMethod} onChange={handleChange} className="input-gaming w-full" placeholder="Ej: Transferencia, PayPal, etc." />
@@ -161,8 +161,8 @@ function Checkout() {
             </div>
 
             <div className="space-y-6">
-              <div className="card p-6">
-                <h2 className="text-xl font-bold text-white mb-4">Resumen</h2>
+              <div className="card p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Resumen</h2>
                 <div className="space-y-3 mb-4">
                   {cart.map(item => (
                     <div key={item.id} className="flex justify-between text-sm">

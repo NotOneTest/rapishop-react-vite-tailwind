@@ -32,11 +32,11 @@ function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-[#0B0F1A]">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Back button */}
         <button
           onClick={() => navigate('/products')}
-          className="text-[#00CFFF] hover:text-[#00A8BB] font-medium mb-6 inline-flex items-center gap-2 transition-colors"
+          className="text-[#00CFFF] hover:text-[#00A8BB] font-medium mb-4 sm:mb-6 inline-flex items-center gap-2 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -57,7 +57,7 @@ function ProductDetail() {
             </div>
 
             {/* Content */}
-            <div className="p-8 flex flex-col justify-center">
+            <div className="p-4 sm:p-8 flex flex-col justify-center">
               {/* Badges */}
               <div className="flex gap-2 mb-4">
                 <span className="badge-secondary">{product.category}</span>
@@ -65,7 +65,7 @@ function ProductDetail() {
               </div>
 
               {/* Title */}
-              <h1 className="text-3xl font-black text-white mb-4">{product.title}</h1>
+              <h1 className="text-2xl sm:text-3xl font-black text-white mb-4">{product.title}</h1>
 
               {/* Description */}
               <p className="text-[#A0A0A0] mb-6 leading-relaxed">{product.description}</p>
@@ -80,7 +80,7 @@ function ProductDetail() {
                 </button>
               ) : (
                 <div className="space-y-4">
-                  <p className="text-4xl font-bold text-[#00CFFF]">${product.price.toFixed(2)}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-[#00CFFF]">${product.price.toFixed(2)}</p>
                   <button
                     onClick={handleAddToCart}
                     className="btn-secondary py-3 px-8 rounded-lg text-lg w-full sm:w-auto"

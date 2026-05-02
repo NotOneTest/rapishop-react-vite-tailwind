@@ -51,10 +51,10 @@ function Feedback() {
 
   return (
     <div className="min-h-screen bg-[#0B0F1A]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-black text-white mb-2">Opiniones de <span className="text-[#00CFFF]">Clientes</span></h1>
-        <p className="text-[#A0A0A0] mb-10">Comparte tu experiencia con nosotros y lee lo que otros gamers opinan</p>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <h1 className="text-3xl sm:text-4xl font-black text-white mb-2">Opiniones de <span className="text-[#00CFFF]">Clientes</span></h1>
+        <p className="text-[#A0A0A0] mb-6 sm:mb-10">Comparte tu experiencia con nosotros y lee lo que otros gamers opinan</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           <div className="lg:col-span-1">
             <div className="card p-6 sticky top-24">
               <h2 className="text-xl font-bold text-white mb-4">Deja tu opinión</h2>
@@ -97,22 +97,22 @@ function Feedback() {
               </form>
             </div>
           </div>
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">Opiniones recientes ({opiniones.length})</h2>
+            <div className="lg:col-span-2 space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
+              <h2 className="text-lg sm:text-xl font-bold text-white">Opiniones recientes ({opiniones.length})</h2>
               <div className="flex items-center gap-2">
                 <span className="text-[#A0A0A0] text-sm">Promedio:</span>
                 <div className="flex">{renderStars(avgRating)}</div>
               </div>
             </div>
             {opiniones.map((opinion) => (
-              <div key={opinion.id} className="card p-6">
-                <div className="flex items-start gap-4">
+              <div key={opinion.id} className="card p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00CFFF] to-[#00A8BB] flex items-center justify-center text-black font-bold text-lg flex-shrink-0">
                     {opinion.user.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                       <div>
                         <h3 className="font-bold text-white">{opinion.user}</h3>
                         <p className="text-xs text-[#A0A0A0]">{opinion.fecha}</p>

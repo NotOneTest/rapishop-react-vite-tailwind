@@ -41,14 +41,14 @@ function Profile() {
 
   return (
     <div className="min-h-screen bg-[#0B0F1A]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="card p-6 mb-8">
-          <div className="flex items-center gap-4 mb-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="card p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00CFFF] to-[#00A8BB] flex items-center justify-center text-black font-bold text-2xl">
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h1 className="text-2xl font-black text-white">{user.name}</h1>
+              <h1 className="text-xl sm:text-2xl font-black text-white">{user.name}</h1>
               <p className="text-[#A0A0A0]">{user.email}</p>
             </div>
           </div>
@@ -63,7 +63,7 @@ function Profile() {
           </button>
         </div>
 
-        <h2 className="text-2xl font-black text-white mb-6">
+        <h2 className="text-xl sm:text-2xl font-black text-white mb-4 sm:mb-6">
           Historial de <span className="text-[#FFD700]">Compras</span>
         </h2>
 
@@ -75,8 +75,8 @@ function Profile() {
         ) : (
           <div className="space-y-4">
             {orders.map(order => (
-              <div key={order.id} className="card p-6">
-                <div className="flex items-start justify-between mb-4">
+              <div key={order.id} className="card p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
                   <div>
                     <h3 className="font-bold text-white">Orden #{order.id}</h3>
                     <p className="text-sm text-[#A0A0A0]">{new Date(order.fecha).toLocaleDateString('es-PE')}</p>
@@ -119,7 +119,7 @@ function Profile() {
                   </div>
                 )}
 
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => handleViewBoleta(order.id)}
                     className="btn-outline py-2 px-4 rounded-lg text-sm"

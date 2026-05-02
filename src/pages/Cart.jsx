@@ -26,11 +26,11 @@ function Cart() {
 
   return (
     <div className="min-h-screen bg-[#0B0F1A]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-black text-white">
-            Carrito <span className="text-[#A0A0A0] text-lg font-normal">({cart.reduce((sum, item) => sum + item.quantity, 0)} juegos)</span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <h1 className="text-2xl sm:text-3xl font-black text-white">
+            Carrito <span className="text-[#A0A0A0] text-base sm:text-lg font-normal">({cart.reduce((sum, item) => sum + item.quantity, 0)} juegos)</span>
           </h1>
           <button
             onClick={clearCart}
