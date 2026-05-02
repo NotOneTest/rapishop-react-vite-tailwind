@@ -9,13 +9,13 @@ function Cart() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0B0F1A] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-white mb-4">Tu carrito está vacío</h1>
-          <p className="text-gray-400 mb-8">Explora el catálogo y agrega tus juegos favoritos</p>
+          <p className="text-[#A0A0A0] mb-8">Explora el catálogo y agrega tus juegos favoritos</p>
           <Link
             to="/products"
-            className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-8 rounded-lg transition"
+            className="btn-secondary py-3 px-8 rounded-lg"
           >
             Explorar juegos
           </Link>
@@ -25,36 +25,46 @@ function Cart() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-[#0B0F1A]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-extrabold text-white">
-            Carrito ({cart.reduce((sum, item) => sum + item.quantity, 0)} juegos)
+          <h1 className="text-3xl font-black text-white">
+            Carrito <span className="text-[#A0A0A0] text-lg font-normal">({cart.reduce((sum, item) => sum + item.quantity, 0)} juegos)</span>
           </h1>
           <button
             onClick={clearCart}
-            className="text-red-400 hover:text-red-300 hover:bg-red-500/10 font-medium py-2 px-4 rounded-lg transition"
+            className="text-red-400 hover:text-red-300 font-medium py-2 px-4 transition-colors"
           >
             Vaciar carrito
           </button>
         </div>
 
+        {/* Items */}
         <div className="space-y-4 mb-8">
           {cart.map(item => (
             <CartItem key={item.id} product={item} />
           ))}
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-3">
-          <div className="flex justify-between text-gray-400">
+        {/* Summary */}
+        <div className="card p-6 space-y-4">
+          <div className="flex justify-between text-[#A0A0A0]">
             <span>Subtotal</span>
             <span>${subtotal.toFixed(2)}</span>
           </div>
-          <hr className="border-gray-800" />
+          <hr className="border-[#1A1F2E]" />
           <div className="flex justify-between text-xl font-bold text-white">
             <span>Total</span>
-            <span>${total.toFixed(2)}</span>
+            <span className="text-[#00CFFF]">${total.toFixed(2)}</span>
           </div>
+
+          {/* Checkout Button */}
+          <Link to="/checkout" className="block">
+            <button className="btn-primary w-full py-3 rounded-lg text-lg font-semibold">
+              Proceder al pago
+            </button>
+          </Link>
         </div>
       </div>
     </div>

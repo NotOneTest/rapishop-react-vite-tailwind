@@ -1,10 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 
 const CartContext = createContext()
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([])
+  const [cart, setCart] = useState(() => {
+    const saved = localStorage.getItem('rapishop_cart')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  useEffect(() => {
+    localStorage.setItem('rapishop_cart', JSON.stringify(cart))
+  }, [cart])
 
   function addToCart(product) {
     setCart(prev => {

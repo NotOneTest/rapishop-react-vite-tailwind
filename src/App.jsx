@@ -4,6 +4,8 @@ import Home from './pages/Home'
 import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
 import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
+import Feedback from './pages/Feedback'
 
 function Layout() {
   return (
@@ -22,6 +24,8 @@ const router = createBrowserRouter([
       { path: '/products', element: <Products /> },
       { path: '/product/:id', element: <ProductDetail /> },
       { path: '/cart', element: <Cart /> },
+      { path: '/checkout', element: <Checkout /> },
+      { path: '/feedback', element: <Feedback /> },
     ],
   },
 ])
