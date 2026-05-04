@@ -17,6 +17,31 @@ function generateDigitalKey() {
   return segments.join('-')
 }
 
+function validateCard(formData) {
+  const errors = {}
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}$/.test(formData.name)) {
+    errors.name = 'Nombre inválido'
+  }
+  if (!/^\d{13,19}$/.test(formData.cardNumber.replace(/\s/g, ''))) {
+    errors.cardNumber = 'Número de tarjeta inválido'
+  }
+  if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(formData.expiryDate)) {
+    errors.expiryDate = 'Formato MM/YY requerido'
+  }
+  if (!/^\d{3,4}$/.test(formData.cvv)) {
+    errors.cvv = 'CVV inválido'
+  }
+  return errors
+}
+
+function validateYape(formData) {
+  const errors = {}
+  if (!/^9\d{8}$/.test(formData.yapePhone.replace(/\s/g, ''))) {
+    errors.yapePhone = 'Ingresa un número válido (9 dígitos, empieza con 9)'
+  }
+  return errors
+}
+
 function Checkout() {
   const navigate = useNavigate()
   const { cart, clearCart } = useCart()
@@ -25,6 +50,8 @@ function Checkout() {
   const [formData, setFormData] = useState({
     name: '', email: '', cardNumber: '', expiryDate: '', cvv: '', yapePhone: '', otherMethod: ''
   })
+  const [errors, setErrors] = useState({})
+  const [submitting, setSubmitting] = useState(false)
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const total = subtotal
@@ -32,12 +59,26 @@ function Checkout() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!paymentMethod) return
-
     if (!isAuthenticated) {
       navigate('/login')
       return
     }
 
+    let validationErrors = {}
+    if (paymentMethod === 'card') {
+      validationErrors = validateCard(formData)
+    } else if (paymentMethod === 'yape') {
+      validationErrors = validateYape(formData)
+    } else if (paymentMethod === 'other' && !formData.otherMethod.trim()) {
+      validationErrors.otherMethod = 'Especifica el método de pago'
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+
+    setSubmitting(true)
     const order = {
       id: Date.now(),
       userId: user.id,
@@ -48,17 +89,23 @@ function Checkout() {
       claveDigital: generateDigitalKey()
     }
 
-    const allOrders = JSON.parse(localStorage.getItem('rapishop_orders') || '[]')
-    const orders = allOrders.length > 0 ? allOrders : ordersData
-    orders.push(order)
-    localStorage.setItem('rapishop_orders', JSON.stringify(orders))
+    try {
+      const allOrders = JSON.parse(localStorage.getItem('rapishop_orders') || '[]')
+      const orders = allOrders.length > 0 ? allOrders : ordersData
+      orders.push(order)
+      localStorage.setItem('rapishop_orders', JSON.stringify(orders))
+    } catch {
+      console.error('Failed to save order to localStorage')
+    }
 
     clearCart()
+    setSubmitting(false)
     navigate('/confirmacion', { state: { order } })
   }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
+    setErrors({ ...errors, [e.target.name]: undefined })
   }
 
   if (cart.length === 0) {
@@ -79,19 +126,20 @@ function Checkout() {
         <h1 className="text-2xl sm:text-3xl font-black text-white mb-6 sm:mb-8">
           Checkout <span className="text-[#A0A0A0] text-base sm:text-lg font-normal">Finaliza tu compra</span>
         </h1>
-        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <div className="space-y-6">
               <div className="card p-4 sm:p-6">
                 <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Datos de contacto</h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm text-[#A0A0A0] mb-1">Nombre completo</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} className="input-gaming w-full" placeholder="Tu nombre" required />
+                    <label htmlFor="checkout-name" className="block text-sm text-[#A0A0A0] mb-1">Nombre completo</label>
+                    <input id="checkout-name" type="text" name="name" value={formData.name} onChange={handleChange} className={`input-gaming w-full ${errors.name ? 'border-red-500' : ''}`} placeholder="Tu nombre" required aria-invalid={!!errors.name} aria-describedby={errors.name ? 'checkout-name-error' : undefined} />
+                    {errors.name && <p id="checkout-name-error" className="text-red-400 text-xs mt-1" role="alert">{errors.name}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm text-[#A0A0A0] mb-1">Email</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} className="input-gaming w-full" placeholder="tu@email.com" required />
+                    <label htmlFor="checkout-email" className="block text-sm text-[#A0A0A0] mb-1">Email</label>
+                    <input id="checkout-email" type="email" name="email" value={formData.email} onChange={handleChange} className="input-gaming w-full" placeholder="tu@email.com" required />
                   </div>
                 </div>
               </div>
@@ -99,29 +147,25 @@ function Checkout() {
               <div className="card p-4 sm:p-6">
                 <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Método de pago</h2>
                 <div className="space-y-3">
-                  <label className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'yape' ? 'border-[#A020F0] bg-[#A020F0]/10' : 'border-[#1A1F2E] hover:border-[#A020F0]'}`}>
-                    <input type="radio" name="payment" value="yape" checked={paymentMethod === 'yape'} onChange={(e) => setPaymentMethod(e.target.value)} className="w-4 h-4" />
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="w-10 h-10 rounded bg-[#A020F0] flex items-center justify-center text-white font-bold text-sm">Y</div>
-                      <span className="text-white font-medium">Yape</span>
-                    </div>
-                  </label>
-                  <label className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'card' ? 'border-[#00CFFF] bg-[#00CFFF]/10' : 'border-[#1A1F2E] hover:border-[#00CFFF]'}`}>
-                    <input type="radio" name="payment" value="card" checked={paymentMethod === 'card'} onChange={(e) => setPaymentMethod(e.target.value)} className="w-4 h-4" />
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="w-10 h-10 rounded border-2 border-[#00CFFF] flex items-center justify-center">
-                        <svg className="w-5 h-5 text-[#00CFFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                  {[
+                    { value: 'yape', color: '#A020F0', label: 'Yape', letter: 'Y' },
+                    { value: 'card', color: '#00CFFF', label: 'Tarjeta', icon: true },
+                    { value: 'other', color: '#FFD700', label: 'Otro método', letter: '?' }
+                  ].map(m => (
+                    <label key={m.value} className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === m.value ? `border-[${m.color}] bg-[${m.color}]/10` : 'border-[#1A1F2E] hover:border-[${m.color}]'}`}>
+                      <input type="radio" name="payment" value={m.value} checked={paymentMethod === m.value} onChange={(e) => setPaymentMethod(e.target.value)} className="w-4 h-4" aria-label={`Pagar con ${m.label}`} />
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className={`w-10 h-10 rounded flex items-center justify-center ${m.icon ? 'border-2 border-[#00CFFF]' : 'bg-[${m.color}]'}`}>
+                          {m.icon ? (
+                            <svg className="w-5 h-5 text-[#00CFFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /> </svg>
+                          ) : (
+                            <span className={`font-bold text-sm ${m.value === 'other' ? 'text-[#FFD700]' : 'text-white'}`}>{m.letter}</span>
+                          )}
+                        </div>
+                        <span className="text-white font-medium">{m.label}</span>
                       </div>
-                      <span className="text-white font-medium">Tarjeta</span>
-                    </div>
-                  </label>
-                  <label className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'other' ? 'border-[#FFD700] bg-[#FFD700]/10' : 'border-[#1A1F2E] hover:border-[#FFD700]'}`}>
-                    <input type="radio" name="payment" value="other" checked={paymentMethod === 'other'} onChange={(e) => setPaymentMethod(e.target.value)} className="w-4 h-4" />
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="w-10 h-10 rounded border-2 border-[#FFD700] flex items-center justify-center"><span className="text-[#FFD700] font-bold">?</span></div>
-                      <span className="text-white font-medium">Otro método</span>
-                    </div>
-                  </label>
+                    </label>
+                  ))}
                 </div>
               </div>
 
@@ -130,12 +174,13 @@ function Checkout() {
                   <h2 className="text-base sm:text-lg font-bold text-white mb-4">Datos de tarjeta</h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm text-[#A0A0A0] mb-1">Número de tarjeta</label>
-                      <input type="text" name="cardNumber" value={formData.cardNumber} onChange={handleChange} className="input-gaming w-full" placeholder="1234 5678 9012 3456" />
+                      <label htmlFor="card-number" className="block text-sm text-[#A0A0A0] mb-1">Número de tarjeta</label>
+                      <input id="card-number" type="text" name="cardNumber" value={formData.cardNumber} onChange={handleChange} inputMode="numeric" maxLength={19} className={`input-gaming w-full ${errors.cardNumber ? 'border-red-500' : ''}`} placeholder="1234 5678 9012 3456" aria-invalid={!!errors.cardNumber} aria-describedby={errors.cardNumber ? 'card-number-error' : undefined} />
+                      {errors.cardNumber && <p id="card-number-error" className="text-red-400 text-xs mt-1" role="alert">{errors.cardNumber}</p>}
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div><label className="block text-sm text-[#A0A0A0] mb-1">Vencimiento</label><input type="text" name="expiryDate" value={formData.expiryDate} onChange={handleChange} className="input-gaming w-full" placeholder="MM/YY" /></div>
-                      <div><label className="block text-sm text-[#A0A0A0] mb-1">CVV</label><input type="text" name="cvv" value={formData.cvv} onChange={handleChange} className="input-gaming w-full" placeholder="123" /></div>
+                      <div><label htmlFor="expiry" className="block text-sm text-[#A0A0A0] mb-1">Vencimiento</label><input id="expiry" type="text" name="expiryDate" value={formData.expiryDate} onChange={handleChange} inputMode="numeric" maxLength={5} className={`input-gaming w-full ${errors.expiryDate ? 'border-red-500' : ''}`} placeholder="MM/YY" aria-invalid={!!errors.expiryDate} aria-describedby={errors.expiryDate ? 'expiry-error' : undefined} />{errors.expiryDate && <p id="expiry-error" className="text-red-400 text-xs mt-1" role="alert">{errors.expiryDate}</p>}</div>
+                      <div><label htmlFor="cvv" className="block text-sm text-[#A0A0A0] mb-1">CVV</label><input id="cvv" type="text" name="cvv" value={formData.cvv} onChange={handleChange} inputMode="numeric" maxLength={4} className={`input-gaming w-full ${errors.cvv ? 'border-red-500' : ''}`} placeholder="123" aria-invalid={!!errors.cvv} aria-describedby={errors.cvv ? 'cvv-error' : undefined} />{errors.cvv && <p id="cvv-error" className="text-red-400 text-xs mt-1" role="alert">{errors.cvv}</p>}</div>
                     </div>
                   </div>
                 </div>
@@ -145,8 +190,9 @@ function Checkout() {
                 <div className="card p-4 sm:p-6">
                   <h2 className="text-base sm:text-lg font-bold text-white mb-4">Datos de Yape</h2>
                   <div>
-                    <label className="block text-sm text-[#A020F0] mb-1">Número de celular</label>
-                    <input type="tel" name="yapePhone" value={formData.yapePhone} onChange={handleChange} className="input-gaming w-full" placeholder="999 999 999" />
+                    <label htmlFor="yape-phone" className="block text-sm text-[#A020F0] mb-1">Número de celular</label>
+                    <input id="yape-phone" type="tel" name="yapePhone" value={formData.yapePhone} onChange={handleChange} inputMode="numeric" maxLength={9} className={`input-gaming w-full ${errors.yapePhone ? 'border-red-500' : ''}`} placeholder="999 999 999" aria-invalid={!!errors.yapePhone} aria-describedby={errors.yapePhone ? 'yape-error' : undefined} />
+                    {errors.yapePhone && <p id="yape-error" className="text-red-400 text-xs mt-1" role="alert">{errors.yapePhone}</p>}
                   </div>
                 </div>
               )}
@@ -155,8 +201,9 @@ function Checkout() {
                 <div className="card p-4 sm:p-6">
                   <h2 className="text-base sm:text-lg font-bold text-white mb-4">Otro método de pago</h2>
                   <div>
-                    <label className="block text-sm text-[#A0A0A0] mb-1">Especifica el método</label>
-                    <input type="text" name="otherMethod" value={formData.otherMethod} onChange={handleChange} className="input-gaming w-full" placeholder="Ej: Transferencia, PayPal, etc." />
+                    <label htmlFor="other-method" className="block text-sm text-[#A0A0A0] mb-1">Especifica el método</label>
+                    <input id="other-method" type="text" name="otherMethod" value={formData.otherMethod} onChange={handleChange} className={`input-gaming w-full ${errors.otherMethod ? 'border-red-500' : ''}`} placeholder="Ej: Transferencia, PayPal, etc." aria-invalid={!!errors.otherMethod} aria-describedby={errors.otherMethod ? 'other-error' : undefined} />
+                    {errors.otherMethod && <p id="other-error" className="text-red-400 text-xs mt-1" role="alert">{errors.otherMethod}</p>}
                   </div>
                 </div>
               )}
@@ -179,7 +226,9 @@ function Checkout() {
                   <span className="text-[#00CFFF]">${total.toFixed(2)}</span>
                 </div>
               </div>
-              <button type="submit" disabled={!paymentMethod} className="btn-primary w-full py-4 rounded-lg text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed">Confirmar compra</button>
+              <button type="submit" disabled={!paymentMethod || submitting} className="btn-primary w-full py-4 rounded-lg text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed" aria-label="Confirmar compra">
+                {submitting ? 'Procesando...' : 'Confirmar compra'}
+              </button>
               <Link to="/cart" className="block text-center text-[#A0A0A0] hover:text-[#00CFFF] transition-colors">← Volver al carrito</Link>
             </div>
           </div>

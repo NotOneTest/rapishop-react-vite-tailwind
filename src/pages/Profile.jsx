@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { generateOrderPDF } from '../utils/generatePDF'
+import { loadFromStorage } from '../utils/storage'
 import ordersData from '../data/orders.json'
 
 function Profile() {
@@ -15,9 +16,8 @@ function Profile() {
       return
     }
 
-    const allOrders = JSON.parse(localStorage.getItem('rapishop_orders') || '[]')
-    const orders = allOrders.length > 0 ? allOrders : ordersData
-    const userOrders = orders.filter(o => o.userId === user.id)
+    const allOrders = loadFromStorage('rapishop_orders', ordersData)
+    const userOrders = allOrders.filter(o => o.userId === user.id)
     setOrders(userOrders)
   }, [user, isAuthenticated, navigate])
 
@@ -46,7 +46,7 @@ function Profile() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="card p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00CFFF] to-[#00A8BB] flex items-center justify-center text-black font-bold text-2xl">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00CFFF] to-[#00A8BB] flex items-center justify-center text-black font-bold text-2xl" aria-hidden="true">
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -60,6 +60,7 @@ function Profile() {
           <button
             onClick={handleLogout}
             className="mt-4 text-red-400 hover:text-red-300 font-medium text-sm transition-colors"
+            aria-label="Cerrar sesión"
           >
             Cerrar sesión
           </button>
@@ -111,7 +112,7 @@ function Profile() {
                 {order.estadoClave === 'entregado' && order.claveDigital && (
                   <div className="bg-[#00CFFF]/10 rounded-lg p-3 mb-4 border border-[#00CFFF]/30">
                     <p className="text-xs text-[#A0A0A0] mb-1">Clave Digital:</p>
-                    <p className="text-lg font-mono font-bold text-[#FFD700] tracking-wider">{order.claveDigital}</p>
+                    <p className="text-lg font-mono font-bold text-[#FFD700] tracking-wider" aria-label={`Clave digital: ${order.claveDigital}`}>{order.claveDigital}</p>
                   </div>
                 )}
 
@@ -125,12 +126,14 @@ function Profile() {
                   <button
                     onClick={() => handleViewBoleta(order.id)}
                     className="btn-outline py-2 px-4 rounded-lg text-sm"
+                    aria-label={`Ver boleta de orden ${order.id}`}
                   >
                     Ver boleta
                   </button>
                   <button
                     onClick={() => handleDownloadPDF(order)}
                     className="btn-secondary py-2 px-4 rounded-lg text-sm"
+                    aria-label={`Descargar PDF de orden ${order.id}`}
                   >
                     Descargar PDF
                   </button>

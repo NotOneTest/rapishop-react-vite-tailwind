@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { validateRegisterForm, getPasswordStrength } from '../utils/validators'
 
 function Register() {
   const navigate = useNavigate()
-  const { register, isAuthenticated } = useAuth()
+  const { register, isAuthenticated, loading } = useAuth()
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState({})
@@ -15,7 +15,7 @@ function Register() {
     return <Navigate to="/perfil" replace />
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setFieldErrors({})
@@ -26,7 +26,7 @@ function Register() {
       return
     }
 
-    const result = register(formData.name, formData.email, formData.password)
+    const result = await register(formData.name, formData.email, formData.password)
     if (result.success) {
       navigate('/perfil')
     } else {
@@ -88,15 +88,16 @@ function Register() {
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm">
+          <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm" role="alert">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div>
-            <label className="block text-sm text-[#A0A0A0] mb-1">Nombre</label>
+            <label htmlFor="reg-name" className="block text-sm text-[#A0A0A0] mb-1">Nombre</label>
             <input
+              id="reg-name"
               type="text"
               name="name"
               value={formData.name}
@@ -105,15 +106,19 @@ function Register() {
               className={`input-gaming w-full ${touched.name && fieldErrors.name ? 'border-red-500' : ''}`}
               placeholder="Tu nombre"
               required
+              autoComplete="name"
+              aria-invalid={!!fieldErrors.name}
+              aria-describedby={fieldErrors.name ? 'reg-name-error' : undefined}
             />
             {touched.name && fieldErrors.name && (
-              <p className="text-red-400 text-xs mt-1">{fieldErrors.name}</p>
+              <p id="reg-name-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.name}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm text-[#A0A0A0] mb-1">Email</label>
+            <label htmlFor="reg-email" className="block text-sm text-[#A0A0A0] mb-1">Email</label>
             <input
+              id="reg-email"
               type="email"
               name="email"
               value={formData.email}
@@ -122,15 +127,19 @@ function Register() {
               className={`input-gaming w-full ${touched.email && fieldErrors.email ? 'border-red-500' : ''}`}
               placeholder="tu@email.com"
               required
+              autoComplete="email"
+              aria-invalid={!!fieldErrors.email}
+              aria-describedby={fieldErrors.email ? 'reg-email-error' : undefined}
             />
             {touched.email && fieldErrors.email && (
-              <p className="text-red-400 text-xs mt-1">{fieldErrors.email}</p>
+              <p id="reg-email-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.email}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm text-[#A0A0A0] mb-1">Contraseña</label>
+            <label htmlFor="reg-password" className="block text-sm text-[#A0A0A0] mb-1">Contraseña</label>
             <input
+              id="reg-password"
               type="password"
               name="password"
               value={formData.password}
@@ -139,6 +148,9 @@ function Register() {
               className={`input-gaming w-full ${touched.password && fieldErrors.password ? 'border-red-500' : ''}`}
               placeholder="Mínimo 8 caracteres"
               required
+              autoComplete="new-password"
+              aria-invalid={!!fieldErrors.password}
+              aria-describedby={fieldErrors.password ? 'reg-password-error' : undefined}
             />
             {formData.password && (
               <div className="mt-2">
@@ -151,7 +163,7 @@ function Register() {
                   </div>
                   <span className="text-xs font-medium" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1" aria-live="polite">
                   {requirements.map((req, i) => (
                     <div key={i} className="flex items-center gap-2 text-xs">
                       <span className={req.met ? 'text-[#00CFFF]' : 'text-[#A0A0A0]'}>
@@ -164,13 +176,14 @@ function Register() {
               </div>
             )}
             {touched.password && fieldErrors.password && (
-              <p className="text-red-400 text-xs mt-1">{fieldErrors.password}</p>
+              <p id="reg-password-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.password}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm text-[#A0A0A0] mb-1">Confirmar contraseña</label>
+            <label htmlFor="reg-confirm" className="block text-sm text-[#A0A0A0] mb-1">Confirmar contraseña</label>
             <input
+              id="reg-confirm"
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
@@ -179,14 +192,17 @@ function Register() {
               className={`input-gaming w-full ${touched.confirmPassword && fieldErrors.confirmPassword ? 'border-red-500' : ''}`}
               placeholder="Repite tu contraseña"
               required
+              autoComplete="new-password"
+              aria-invalid={!!fieldErrors.confirmPassword}
+              aria-describedby={fieldErrors.confirmPassword ? 'reg-confirm-error' : undefined}
             />
             {touched.confirmPassword && fieldErrors.confirmPassword && (
-              <p className="text-red-400 text-xs mt-1">{fieldErrors.confirmPassword}</p>
+              <p id="reg-confirm-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.confirmPassword}</p>
             )}
           </div>
 
-          <button type="submit" className="btn-primary w-full py-3 rounded-lg text-lg font-semibold">
-            Crear cuenta
+          <button type="submit" className="btn-primary w-full py-3 rounded-lg text-lg font-semibold" disabled={loading} aria-label="Crear cuenta">
+            {loading ? 'Creando cuenta...' : 'Crear cuenta'}
           </button>
         </form>
 

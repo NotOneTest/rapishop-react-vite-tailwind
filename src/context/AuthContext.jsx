@@ -1,50 +1,65 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import usersData from '../data/users.json'
+import { loadFromStorage, saveToStorage, removeFromStorage } from '../utils/storage'
 
 const AuthContext = createContext()
 
+const API_URL = 'http://localhost:3001/api'
+
 export function AuthProvider({ children }) {
-  const [users, setUsers] = useState(() => {
-    const saved = localStorage.getItem('rapishop_users')
-    return saved ? JSON.parse(saved) : usersData
-  })
-
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('rapishop_currentUser')
-    return saved ? JSON.parse(saved) : null
-  })
-
-  useEffect(() => {
-    localStorage.setItem('rapishop_users', JSON.stringify(users))
-  }, [users])
+  const [user, setUser] = useState(() => loadFromStorage('rapishop_currentUser', null))
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem('rapishop_currentUser', JSON.stringify(user))
+      saveToStorage('rapishop_currentUser', user)
     } else {
-      localStorage.removeItem('rapishop_currentUser')
+      removeFromStorage('rapishop_currentUser')
     }
   }, [user])
 
-  function login(email, password) {
-    const found = users.find(u => u.email === email && u.password === password)
-    if (found) {
-      setUser(found)
-      return { success: true }
+  async function login(email, password) {
+    setLoading(true)
+    try {
+      const res = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setUser(data.user)
+        setLoading(false)
+        return { success: true }
+      }
+      setLoading(false)
+      return { success: false, error: data.error || 'Error al iniciar sesión' }
+    } catch {
+      setLoading(false)
+      return { success: false, error: 'No se pudo conectar al servidor. Intenta de nuevo.' }
     }
-    return { success: false, error: 'Email o contraseña incorrectos' }
   }
 
-  function register(name, email, password) {
-    if (users.find(u => u.email === email)) {
-      return { success: false, error: 'El email ya está registrado' }
+  async function register(name, email, password) {
+    setLoading(true)
+    try {
+      const res = await fetch(`${API_URL}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setUser(data.user)
+        setLoading(false)
+        return { success: true }
+      }
+      setLoading(false)
+      return { success: false, error: data.error || 'Error al registrarse' }
+    } catch {
+      setLoading(false)
+      return { success: false, error: 'No se pudo conectar al servidor. Intenta de nuevo.' }
     }
-    const newUser = { id: Date.now(), name, email, password, createdAt: new Date().toISOString() }
-    const updatedUsers = [...users, newUser]
-    setUsers(updatedUsers)
-    setUser(newUser)
-    return { success: true }
   }
 
   function logout() {
@@ -52,7 +67,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isAuthenticated: !!user, loading }}>
       {children}
     </AuthContext.Provider>
   )

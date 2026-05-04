@@ -1,56 +1,55 @@
+import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import GameImage from './GameImage'
 
 function CartItem({ product }) {
-  const { updateQuantity, removeFromCart } = useCart()
+  const { removeFromCart, updateQuantity } = useCart()
 
   return (
-    <div className="card p-4">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-        {/* Image */}
-        <img
+    <div className="card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <Link to={`/product/${product.id}`} className="shrink-0" aria-label={`Ver detalles de ${product.title}`}>
+        <GameImage
           src={product.image}
           alt={product.title}
-          className="w-16 h-20 object-cover rounded sm:flex-shrink-0"
+          className="w-20 h-24 object-cover rounded-lg"
         />
+      </Link>
 
-        {/* Info */}
-        <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0">
+        <Link to={`/product/${product.id}`} className="hover:text-[#00CFFF] transition-colors">
           <h3 className="font-semibold text-white truncate">{product.title}</h3>
-          <span className="text-xs text-[#A0A0A0]">{product.category}</span>
-        </div>
+        </Link>
+        <p className="text-sm text-[#A0A0A0]">{product.category} • {product.platform}</p>
+        <p className="text-[#00CFFF] font-bold mt-1">${product.price.toFixed(2)}</p>
+      </div>
 
-        {/* Controls Row */}
-        <div className="flex items-center justify-between sm:justify-end gap-4">
-          {/* Quantity Controls */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => updateQuantity(product.id, product.quantity - 1)}
-              className="w-8 h-8 flex items-center justify-center rounded bg-[#1A1F2E] hover:bg-[#00CFFF]/20 transition-colors text-white font-bold"
-            >
-              -
-            </button>
-            <span className="w-8 text-center text-white font-medium">{product.quantity}</span>
-            <button
-              onClick={() => updateQuantity(product.id, product.quantity + 1)}
-              className="w-8 h-8 flex items-center justify-center rounded bg-[#1A1F2E] hover:bg-[#00CFFF]/20 transition-colors text-white font-bold"
-            >
-              +
-            </button>
-          </div>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => updateQuantity(product.id, product.quantity - 1)}
+          className="w-8 h-8 rounded bg-[#1A1F2E] text-white flex items-center justify-center hover:bg-[#252B3B] transition-colors"
+          aria-label={`Reducir cantidad de ${product.title}`}
+        >
+          −
+        </button>
+        <span className="text-white font-medium w-6 text-center" aria-label={`Cantidad: ${product.quantity}`}>{product.quantity}</span>
+        <button
+          onClick={() => updateQuantity(product.id, product.quantity + 1)}
+          className="w-8 h-8 rounded bg-[#1A1F2E] text-white flex items-center justify-center hover:bg-[#252B3B] transition-colors"
+          aria-label={`Aumentar cantidad de ${product.title}`}
+        >
+          +
+        </button>
+      </div>
 
-          {/* Price */}
-          <p className="font-semibold text-[#00CFFF] sm:w-20 text-right">
-            ${(product.price * product.quantity).toFixed(2)}
-          </p>
-
-          {/* Remove Button */}
-          <button
-            onClick={() => removeFromCart(product.id)}
-            className="text-red-400 hover:text-red-300 transition-colors text-sm"
-          >
-            Eliminar
-          </button>
-        </div>
+      <div className="flex items-center gap-4">
+        <p className="font-bold text-white">${(product.price * product.quantity).toFixed(2)}</p>
+        <button
+          onClick={() => removeFromCart(product.id)}
+          className="text-red-400 hover:text-red-300 transition-colors px-2 py-1"
+          aria-label={`Eliminar ${product.title} del carrito`}
+        >
+          Eliminar
+        </button>
       </div>
     </div>
   )

@@ -1,16 +1,14 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react'
+import { loadFromStorage, saveToStorage } from '../utils/storage'
 
 const CartContext = createContext()
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem('rapishop_cart')
-    return saved ? JSON.parse(saved) : []
-  })
+  const [cart, setCart] = useState(() => loadFromStorage('rapishop_cart', []))
 
   useEffect(() => {
-    localStorage.setItem('rapishop_cart', JSON.stringify(cart))
+    saveToStorage('rapishop_cart', cart)
   }, [cart])
 
   function addToCart(product) {
@@ -55,7 +53,7 @@ export function CartProvider({ children }) {
 export function useCart() {
   const context = useContext(CartContext)
   if (!context) {
-    throw new Error('useCart must be used within a CartProvider')
+    throw new Error('useCart must be used within a CartContext')
   }
   return context
 }

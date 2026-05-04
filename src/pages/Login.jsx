@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { validateEmail } from '../utils/validators'
 
 function Login() {
   const navigate = useNavigate()
-  const { login, isAuthenticated } = useAuth()
+  const { login, isAuthenticated, loading } = useAuth()
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState({})
@@ -15,7 +15,7 @@ function Login() {
     return <Navigate to="/perfil" replace />
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setFieldErrors({})
@@ -31,7 +31,7 @@ function Login() {
       return
     }
 
-    const result = login(formData.email, formData.password)
+    const result = await login(formData.email, formData.password)
     if (result.success) {
       navigate('/perfil')
     } else {
@@ -70,15 +70,16 @@ function Login() {
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm">
+          <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm" role="alert">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div>
-            <label className="block text-sm text-[#A0A0A0] mb-1">Email</label>
+            <label htmlFor="login-email" className="block text-sm text-[#A0A0A0] mb-1">Email</label>
             <input
+              id="login-email"
               type="email"
               name="email"
               value={formData.email}
@@ -87,15 +88,19 @@ function Login() {
               className={`input-gaming w-full ${touched.email && fieldErrors.email ? 'border-red-500' : ''}`}
               placeholder="tu@email.com"
               required
+              autoComplete="email"
+              aria-invalid={!!fieldErrors.email}
+              aria-describedby={fieldErrors.email ? 'login-email-error' : undefined}
             />
             {touched.email && fieldErrors.email && (
-              <p className="text-red-400 text-xs mt-1">{fieldErrors.email}</p>
+              <p id="login-email-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.email}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm text-[#A0A0A0] mb-1">Contraseña</label>
+            <label htmlFor="login-password" className="block text-sm text-[#A0A0A0] mb-1">Contraseña</label>
             <input
+              id="login-password"
               type="password"
               name="password"
               value={formData.password}
@@ -104,14 +109,17 @@ function Login() {
               className={`input-gaming w-full ${touched.password && fieldErrors.password ? 'border-red-500' : ''}`}
               placeholder="••••••••"
               required
+              autoComplete="current-password"
+              aria-invalid={!!fieldErrors.password}
+              aria-describedby={fieldErrors.password ? 'login-password-error' : undefined}
             />
             {touched.password && fieldErrors.password && (
-              <p className="text-red-400 text-xs mt-1">{fieldErrors.password}</p>
+              <p id="login-password-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.password}</p>
             )}
           </div>
 
-          <button type="submit" className="btn-primary w-full py-3 rounded-lg text-lg font-semibold">
-            Ingresar
+          <button type="submit" className="btn-primary w-full py-3 rounded-lg text-lg font-semibold" disabled={loading} aria-label="Ingresar a tu cuenta">
+            {loading ? 'Ingresando...' : 'Ingresar'}
           </button>
         </form>
 
