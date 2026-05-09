@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
-import ordersData from '../data/orders.json'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 function generateDigitalKey() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -56,7 +57,7 @@ function Checkout() {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const total = subtotal
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!paymentMethod) return
     if (!isAuthenticated) {
@@ -79,23 +80,29 @@ function Checkout() {
     }
 
     setSubmitting(true)
+    const claveDigital = generateDigitalKey()
     const order = {
-      id: Date.now(),
       userId: user.id,
       productos: cart,
       total,
-      fecha: new Date().toISOString(),
       estadoClave: 'pendiente',
-      claveDigital: generateDigitalKey()
+      claveDigital
     }
 
     try {
-      const allOrders = JSON.parse(localStorage.getItem('rapishop_orders') || '[]')
-      const orders = allOrders.length > 0 ? allOrders : ordersData
-      orders.push(order)
-      localStorage.setItem('rapishop_orders', JSON.stringify(orders))
+      const res = await fetch(`${API_URL}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order)
+      })
+      const data = await res.json()
+      if (data.success) {
+        order.id = data.order.id
+        order.fecha = data.order.fecha
+      }
     } catch {
-      console.error('Failed to save order to localStorage')
+      order.id = Date.now()
+      order.fecha = new Date().toISOString()
     }
 
     clearCart()

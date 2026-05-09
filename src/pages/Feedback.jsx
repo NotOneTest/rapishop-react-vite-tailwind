@@ -1,33 +1,50 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import initialOpiniones from '../data/opiniones.json'
 import { useAuth } from '../context/AuthContext'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 function Feedback() {
   const { user } = useAuth()
-  const [opiniones, setOpiniones] = useState(() => {
-    const saved = localStorage.getItem('rapishop_opiniones')
-    if (saved) {
-      return JSON.parse(saved)
-    }
-    return initialOpiniones
-  })
+  const [opiniones, setOpiniones] = useState([])
+  const [loading, setLoading] = useState(true)
   const [newOpinion, setNewOpinion] = useState({ user: '', rating: 5, comentario: '' })
 
   useEffect(() => {
-    localStorage.setItem('rapishop_opiniones', JSON.stringify(opiniones))
-  }, [opiniones])
+    async function fetchFeedback() {
+      try {
+        const res = await fetch(`${API_URL}/feedback`)
+        const data = await res.json()
+        if (data.success) {
+          setOpiniones(data.feedback)
+        }
+      } catch {
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchFeedback()
+  }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const opinion = {
-      id: Date.now(),
       user: newOpinion.user || user?.name || 'Anónimo',
-      comentario: newOpinion.comentario,
       rating: newOpinion.rating,
-      fecha: new Date().toISOString().split('T')[0]
+      comentario: newOpinion.comentario
     }
-    setOpiniones([opinion, ...opiniones])
+    try {
+      const res = await fetch(`${API_URL}/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(opinion)
+      })
+      const data = await res.json()
+      if (data.success) {
+        setOpiniones([data.feedback, ...opiniones])
+      }
+    } catch {
+    }
     setNewOpinion({ user: '', rating: 5, comentario: '' })
   }
 

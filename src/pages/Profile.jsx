@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { generateOrderPDF } from '../utils/generatePDF'
-import { loadFromStorage } from '../utils/storage'
-import ordersData from '../data/orders.json'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 function Profile() {
   const { user, logout, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [orders, setOrders] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -16,9 +17,20 @@ function Profile() {
       return
     }
 
-    const allOrders = loadFromStorage('rapishop_orders', ordersData)
-    const userOrders = allOrders.filter(o => o.userId === user.id)
-    setOrders(userOrders)
+    async function fetchOrders() {
+      try {
+        const res = await fetch(`${API_URL}/orders/${user.id}`)
+        const data = await res.json()
+        if (data.success) {
+          setOrders(data.orders)
+        }
+      } catch {
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOrders()
   }, [user, isAuthenticated, navigate])
 
   function handleLogout() {
@@ -39,6 +51,14 @@ function Profile() {
 
   if (!isAuthenticated || !user) {
     return null
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0B0F1A] flex items-center justify-center">
+        <div className="text-[#00CFFF]">Cargando...</div>
+      </div>
+    )
   }
 
   return (

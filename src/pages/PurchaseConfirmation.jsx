@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, Navigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { loadFromStorage, saveToStorage } from '../utils/storage'
-import ordersData from '../data/orders.json'
 import { generateOrderPDF } from '../utils/generatePDF'
 
 function PurchaseConfirmation() {
@@ -17,29 +15,12 @@ function PurchaseConfirmation() {
       navigate('/login')
       return
     }
-
-    if (!order) {
-      const allOrders = loadFromStorage('rapishop_orders', ordersData)
-      const lastOrder = allOrders[allOrders.length - 1]
-      if (lastOrder && lastOrder.userId === user?.id) {
-        setOrder(lastOrder)
-      }
-    }
-  }, [isAuthenticated, user, order, navigate])
+  }, [isAuthenticated, navigate])
 
   useEffect(() => {
     if (!order) return
     const timer = setTimeout(() => {
       setDelivered(true)
-      try {
-        const orders = loadFromStorage('rapishop_orders', ordersData)
-        const updated = orders.map(o =>
-          o.id === order.id ? { ...o, estadoClave: 'entregado' } : o
-        )
-        saveToStorage('rapishop_orders', updated)
-      } catch {
-        console.error('Failed to update order status in localStorage')
-      }
     }, 5000)
     return () => clearTimeout(timer)
   }, [order])
