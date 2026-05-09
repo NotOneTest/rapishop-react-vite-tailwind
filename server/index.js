@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import { readFileSync, writeFileSync } from 'fs'
 
 const app = express()
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 const USERS_FILE = new URL('./users.json', import.meta.url)
 
 app.use(cors({
