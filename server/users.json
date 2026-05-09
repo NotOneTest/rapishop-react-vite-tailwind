@@ -5,5 +5,19 @@
     "email": "ander@gmail.com",
     "passwordHash": "$2b$10$WvpugLwWHCIZOWJMvZ8Wmu1DKUSbAtwMC/Ab3UXsEPmSFGnHiOAi2",
     "createdAt": "2026-05-04T19:04:27.466Z"
+  },
+  {
+    "id": 1778329479537,
+    "name": "Emmanuel Ccuno",
+    "email": "emmanuelccuno@gmail.com",
+    "passwordHash": "$2b$10$sn3WEJX3nmBK4gQ1/gJ.7.OxWqaVHkE4owkuOc.C1ZjZ.T.HOTAU2",
+    "createdAt": "2026-05-09T12:24:39.537Z"
+  },
+  {
+    "id": 1778329599272,
+    "name": "Emmanuel",
+    "email": "kris1@gmail.com",
+    "passwordHash": "$2b$10$O6uqBaV21MGb1yrxtMzwBuJLN3tT00gzfLF4JyiVIpB8kV8XFvw2W",
+    "createdAt": "2026-05-09T12:26:39.272Z"
   }
 ]

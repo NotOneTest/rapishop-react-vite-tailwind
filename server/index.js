@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3001
 const USERS_FILE = new URL('./users.json', import.meta.url)
 
 app.use(cors({
-  origin: ['https://rapishoptest.netlify.app', 'http://localhost:5173'],
+  origin: ['https://rapishoptest.netlify.app', 'http://localhost:5173', 'http://localhost:4173', 'http://localhost:3001'],
   methods: ['GET', 'POST'],
   credentials: true
 }))
