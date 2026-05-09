@@ -1,21 +1,13 @@
-// CONTEXT API DE AUTENTICACION
-// Permite compartir estado del usuario entre componentes (login, registro, logout, sesion persistente)
-
 import { createContext, useContext, useState, useEffect } from 'react'
 import { loadFromStorage, saveToStorage, removeFromStorage } from '../utils/storage'
 
 const AuthContext = createContext()
-
-// URL del backend local
 const API_URL = 'http://localhost:3001/api'
 
-// PROVIDER DEL CONTEXT
 export function AuthProvider({ children }) {
-  // useState con inicializador lazy: carga desde localStorage solo al inicio
   const [user, setUser] = useState(() => loadFromStorage('rapishop_currentUser', null))
   const [loading, setLoading] = useState(false)
 
-  // sincroniza estado con localStorage cada vez que user cambia
   useEffect(() => {
     if (user) {
       saveToStorage('rapishop_currentUser', user)
@@ -24,7 +16,6 @@ export function AuthProvider({ children }) {
     }
   }, [user])
 
-  // FUNCION LOGIN - async/await para esperar respuesta del servidor
   async function login(email, password) {
     setLoading(true)
     try {
@@ -44,13 +35,11 @@ export function AuthProvider({ children }) {
       setLoading(false)
       return { success: false, error: data.error || 'Error al iniciar sesión' }
     } catch {
-      // catch: atrapa errores de red
       setLoading(false)
       return { success: false, error: 'No se pudo conectar al servidor. Intenta de nuevo.' }
     }
   }
 
-  // FUNCION REGISTER
   async function register(name, email, password) {
     setLoading(true)
     try {
@@ -73,7 +62,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // FUNCION LOGOUT
   async function logout() {
     try {
       await fetch(`${API_URL}/logout`, { method: 'POST' })
@@ -82,7 +70,6 @@ export function AuthProvider({ children }) {
     setUser(null)
   }
 
-  // VALUE: todo lo que se comparte con componentes hijos
   return (
     <AuthContext.Provider value={{
       user,
@@ -97,7 +84,6 @@ export function AuthProvider({ children }) {
   )
 }
 
-// HOOK PERSONALIZADO para acceder al contexto
 export function useAuth() {
   const context = useContext(AuthContext)
   if (!context) {

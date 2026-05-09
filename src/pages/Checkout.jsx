@@ -1,6 +1,3 @@
-// PAGINA DE PAGO - Checkout
-// Valida metodo de pago, guarda orden en backend, genera clave digital
-
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
@@ -8,7 +5,6 @@ import { useAuth } from '../context/AuthContext'
 
 const API_URL = 'http://localhost:3001/api'
 
-// Genera clave digital simulada (XXXX-XXXX-XXXX)
 function generateDigitalKey() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   const segments = []
@@ -24,7 +20,6 @@ function generateDigitalKey() {
   return segments.join('-')
 }
 
-// Validacion de tarjeta con REGEX
 function validateCard(formData) {
   const errors = {}
 
@@ -44,7 +39,6 @@ function validateCard(formData) {
   return errors
 }
 
-// Validacion de Yape (9 digitos, empieza con 9)
 function validateYape(formData) {
   const errors = {}
 
@@ -67,11 +61,9 @@ function Checkout() {
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
 
-  // Calcular total con reduce()
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const total = subtotal
 
-  // Procesar formulario de checkout
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -81,7 +73,6 @@ function Checkout() {
       return
     }
 
-    // Validacion segun metodo de pago
     let validationErrors = {}
     if (paymentMethod === 'card') {
       validationErrors = validateCard(formData)
@@ -107,7 +98,6 @@ function Checkout() {
       claveDigital
     }
 
-    // Enviar orden al backend
     try {
       const res = await fetch(`${API_URL}/orders`, {
         method: 'POST',
@@ -121,7 +111,6 @@ function Checkout() {
         order.fecha = data.order.fecha
       }
     } catch {
-      // Fallback: generar ID local si falla la conexion
       order.id = Date.now()
       order.fecha = new Date().toISOString()
     }
@@ -129,17 +118,14 @@ function Checkout() {
     clearCart()
     setSubmitting(false)
 
-    // Pasar orden via state a la siguiente ruta
     navigate('/confirmacion', { state: { order } })
   }
 
-  // Actualizar campos del formulario dinamicamente
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
     setErrors({ ...errors, [e.target.name]: undefined })
   }
 
-  // Mostrar mensaje si carrito vacio
   if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-[#0B0F1A] flex items-center justify-center">
@@ -162,7 +148,6 @@ function Checkout() {
         <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <div className="space-y-6">
-              {/* Datos de contacto */}
               <div className="card p-4 sm:p-6">
                 <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Datos de contacto</h2>
                 <div className="space-y-4">
@@ -178,7 +163,6 @@ function Checkout() {
                 </div>
               </div>
 
-              {/* Metodos de pago */}
               <div className="card p-4 sm:p-6">
                 <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Método de pago</h2>
                 <div className="space-y-3">
@@ -206,7 +190,6 @@ function Checkout() {
                 </div>
               </div>
 
-              {/* Formularios condicionales segun metodo */}
               {paymentMethod === 'card' && (
                 <div className="card p-4 sm:p-6">
                   <h2 className="text-base sm:text-lg font-bold text-white mb-4">Datos de tarjeta</h2>
@@ -247,7 +230,6 @@ function Checkout() {
               )}
             </div>
 
-            {/* Resumen y boton */}
             <div className="space-y-6">
               <div className="card p-4 sm:p-6">
                 <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Resumen</h2>
