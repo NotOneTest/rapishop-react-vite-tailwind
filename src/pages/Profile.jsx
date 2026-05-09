@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { generateOrderPDF } from '../utils/generatePDF'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+const API_URL = 'http://localhost:3001/api'
 
 function Profile() {
   const { user, logout, isAuthenticated } = useAuth()

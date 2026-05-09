@@ -6,8 +6,8 @@ import { loadFromStorage, saveToStorage, removeFromStorage } from '../utils/stor
 
 const AuthContext = createContext()
 
-// Variable de entorno de Vite para la URL del backend
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+// URL del backend local
+const API_URL = 'http://localhost:3001/api'
 
 // PROVIDER DEL CONTEXT
 export function AuthProvider({ children }) {

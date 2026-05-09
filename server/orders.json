@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "id": 1778333551003,
+    "userId": 1778329599272,
+    "productos": [
+      {
+        "id": 3,
+        "title": "Red Dead Redemption 2",
+        "price": 39.99,
+        "image": "/images/productos/red-dead-redemption-2.jpg",
+        "description": "Épica historia de vida en el despiadado corazón de América. Arthur Morgan y la banda de Van der Linde huyen tras un robo fallido.",
+        "category": "Acción",
+        "platform": "PC",
+        "quantity": 2
+      },
+      {
+        "id": 8,
+        "title": "God of War Ragnarök",
+        "price": 49.99,
+        "image": "/images/productos/god-of-war-ragnarok.jpg",
+        "description": "Kratos y Atreus deben viajar a cada uno de los nueve reinos en busca de respuestas mientras las fuerzas asgardianas se preparan para el Ragnarök.",
+        "category": "Acción",
+        "platform": "PC",
+        "quantity": 1
+      }
+    ],
+    "total": 129.97,
+    "fecha": "2026-05-09T13:32:31.003Z",
+    "estadoClave": "pendiente",
+    "claveDigital": "0GOC-GYPH-2XDS"
+  }
+]

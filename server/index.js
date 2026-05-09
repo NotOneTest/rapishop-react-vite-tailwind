@@ -18,9 +18,9 @@ const ORDERS_FILE = new URL('./orders.json', import.meta.url)
 const FEEDBACK_FILE = new URL('./feedback.json', import.meta.url)
 
 // MIDDLEWARES
-// CORS - Permite peticiones del frontend (Netlify/Render)
+// CORS - Permite peticiones de cualquier origen para desarrollo local
 app.use(cors({
-  origin: ['https://rapishoptest.netlify.app', 'http://localhost:5173', 'http://localhost:4173', 'http://localhost:3001'],
+  origin: true,
   methods: ['GET', 'POST'],
   credentials: true
 }))

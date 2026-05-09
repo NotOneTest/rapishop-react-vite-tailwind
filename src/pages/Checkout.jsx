@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+const API_URL = 'http://localhost:3001/api'
 
 // Genera clave digital simulada (XXXX-XXXX-XXXX)
 function generateDigitalKey() {
