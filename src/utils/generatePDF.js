@@ -1,3 +1,4 @@
+// Generador de PDFs de órdenes usando jsPDF
 import jsPDF from 'jspdf'
 
 export function generateOrderPDF(order, user) {

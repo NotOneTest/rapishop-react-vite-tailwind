@@ -1,3 +1,4 @@
+// Página del carrito - Lista productos, calcula total y redirige a checkout
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import CartItem from '../components/CartItem'

@@ -1,3 +1,4 @@
+// Confirmación de compra - Muestra clave digital tras 5s y permite descargar PDF
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'

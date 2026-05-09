@@ -1,3 +1,4 @@
+// Item del carrito - Controla cantidad y elimina productos
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import GameImage from './GameImage'

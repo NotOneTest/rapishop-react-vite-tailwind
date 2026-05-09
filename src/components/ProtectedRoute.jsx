@@ -1,3 +1,7 @@
+// HIGHER ORDER COMPONENT (HOC) DE PROTECCION
+// Protege rutas que requieren autenticacion
+// Si no esta logueado -> redirige a /login
+
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 

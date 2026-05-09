@@ -1,3 +1,4 @@
+// Componente de imagen con fallback en caso de error de carga
 import { useState } from 'react'
 
 function GameImage({ src, alt, className = '', fallbackText = 'Image not found' }) {

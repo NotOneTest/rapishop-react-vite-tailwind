@@ -1,3 +1,4 @@
+// Detalle de producto - Muestra info, descripción y botón agregar al carrito
 import { useParams, useNavigate } from 'react-router-dom'
 import { getProductById } from '../data/products'
 import { useCart } from '../context/CartContext'

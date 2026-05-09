@@ -1,3 +1,4 @@
+// Página de inicio - Hero section y características de la tienda
 import { Link } from 'react-router-dom'
 
 function Home() {

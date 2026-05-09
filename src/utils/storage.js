@@ -1,3 +1,4 @@
+// Utilidad para localStorage segura con manejo de errores
 const QUOTA_EXCEEDED = 'QuotaExceededError'
 
 function safeGetItem(key) {

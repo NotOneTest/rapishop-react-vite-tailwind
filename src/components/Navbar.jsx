@@ -1,3 +1,4 @@
+// Navbar - Navegación con menú móvil, carrito y estado de sesión
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'

@@ -1,3 +1,4 @@
+// Página de login - Formulario de inicio de sesión con validación
 import { useState } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'

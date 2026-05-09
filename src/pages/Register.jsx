@@ -1,3 +1,4 @@
+// Página de registro - Formulario con validación y medidor de fuerza de contraseña
 import { useState } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'

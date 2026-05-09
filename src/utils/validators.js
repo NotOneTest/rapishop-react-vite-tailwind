@@ -1,3 +1,4 @@
+// Validadores de formulario - Email, password, nombre y registro
 export function validateEmail(email) {
   if (!email || email.trim() === '') {
     return 'El email es obligatorio'

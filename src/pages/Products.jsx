@@ -1,3 +1,4 @@
+// Catálogo de productos - Filtra por búsqueda, categoría y precio
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { products } from '../data/products'

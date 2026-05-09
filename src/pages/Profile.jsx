@@ -1,3 +1,6 @@
+// PERFIL DE USUARIO
+// Muestra datos del usuario, historial de compras y descarga PDF
+
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -11,6 +14,7 @@ function Profile() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Cargar ordenes del usuario desde el backend
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login')
