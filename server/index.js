@@ -7,7 +7,11 @@ const app = express()
 const PORT = 3001
 const USERS_FILE = new URL('./users.json', import.meta.url)
 
-app.use(cors())
+app.use(cors({
+  origin: ['https://rapishoptest.netlify.app', 'http://localhost:5173'],
+  methods: ['GET', 'POST'],
+  credentials: true
+}))
 app.use(express.json())
 
 function readUsers() {
