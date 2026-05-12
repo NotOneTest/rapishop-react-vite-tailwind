@@ -1,10 +1,10 @@
 # RapiShop
 
-Sistema de gestión de pedidos y retroalimentación para una tienda de comida rápida.
+Plataforma de venta de videojuegos y claves digitales.
 
 ## Descripción
 
-RapiShop es una aplicación web full-stack diseñada para la gestión eficiente de pedidos en un local de comida rápida. Permite a los empleados manejar pedidos, generar tickets de cocina en formato PDF, y gestionar retroalimentación de clientes de manera sencilla.
+RapiShop es una aplicación web full-stack diseñada para la venta y gestión de videojuegos y claves digitales. Permite administrar productos, procesar pedidos, generar facturas y gestionar el inventario de claves de activación de manera eficiente.
 
 ## Tecnologías
 
@@ -107,15 +107,18 @@ rapishop/
 ### Frontend
 
 - **Autenticación**: Inicio de sesión con usuarios registrados
-- **Gestión de Pedidos**: Crear, visualizar y gestionar pedidos de clientes
-- **Tickets PDF**: Generación de tickets de cocina en formato PDF con detalles del pedido
-- **Retroalimentación**: Registro y visualización de calificaciones y comentarios de clientes
+- **Catálogo de Videojuegos**: Visualizar y explorar videojuegos disponibles
+- **Gestión de Claves**: Compra y activación de claves digitales
+- **Pedidos**: Procesamiento y seguimiento de compras
+- **Facturas PDF**: Generación de facturas en formato PDF
+- **Retroalimentación**: Registro y visualización de opiniones de clientes
 
 ### Backend
 
-- **API REST**: Endpoints para usuarios, pedidos y feedback
+- **API REST**: Endpoints para usuarios, productos, pedidos y feedback
 - **Almacenamiento**: Persistencia de datos en archivos JSON
 - **Seguridad**: Contraseñas encriptadas con bcrypt
+- **Gestión de Inventario**: Control de claves digitales disponibles
 
 ---
 
