@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { generateOrderPDF } from '../utils/generatePDF'
-
-const API_URL = 'http://localhost:3001/api'
+import API_URL from '../config'
 
 function Profile() {
   const { user, logout, isAuthenticated } = useAuth()

@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import bcrypt from 'bcrypt'
 import { readFileSync, writeFileSync } from 'fs'
+import { fileURLToPath } from 'url'
+import path from 'path'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -170,6 +172,14 @@ app.get('/api/feedback', (req, res) => {
   const feedback = readFeedback()
   res.json({ success: true, feedback })
 })
+
+if (process.env.NODE_ENV === 'production') {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  app.use(express.static(path.join(__dirname, '../dist')))
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'))
+  })
+}
 
 app.listen(PORT, () => {
   console.log(`Rapishop API running on http://localhost:${PORT}`)

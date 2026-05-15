@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { loadFromStorage, saveToStorage, removeFromStorage } from '../utils/storage'
+import API_URL from '../config'
 
 const AuthContext = createContext()
-const API_URL = 'http://localhost:3001/api'
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => loadFromStorage('rapishop_currentUser', null))

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-
-const API_URL = 'http://localhost:3001/api'
+import API_URL from '../config'
 
 function Feedback() {
   const { user } = useAuth()
