@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 import path from 'path'
 
 const app = express()
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 10000
 
 const USERS_FILE = new URL('./users.json', import.meta.url)
 const ORDERS_FILE = new URL('./orders.json', import.meta.url)
